@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>QR Generator App</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<h1>QR Code Generator</h1>
+
+<input type="text" id="text" placeholder="Enter text or link">
+
+<br><br>
+
+<button onclick="generateQR()">Generate QR</button>
+
+<br><br>
+
+<img id="qr" width="200">
+
+<br><br>
+
+<button onclick="downloadQR()">Download QR</button>
+
+<h2>Your QR History</h2>
+
+<ul id="history"></ul>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+
+<script>
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBcQU39OcjJ_EnIUIRPQStZnkl6QiLHp2o",
+  authDomain: "qr-generator-app-e20ed.firebaseapp.com",
+  projectId: "qr-generator-app-e20ed",
+  storageBucket: "qr-generator-app-e20ed.firebasestorage.app",
+  messagingSenderId: "386821981921",
+  appId: "1:386821981921:web:5164980f2c1871366dd9a0",
+  measurementId: "G-5PHW61H0K6"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+</script>
+
+<script src="script.js"></script>
+
+</body>
+</html>
