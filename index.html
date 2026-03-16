@@ -1,54 +1,106 @@
+```html
 <!DOCTYPE html>
 <html>
 <head>
-<title>QR Generator App</title>
-<link rel="stylesheet" href="style.css">
+<title>Yugal QR Generator</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+font-family: Arial, sans-serif;
+background: linear-gradient(135deg,#1e3c72,#2a5298);
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+margin:0;
+}
+
+.container{
+background:white;
+padding:30px;
+border-radius:10px;
+text-align:center;
+width:90%;
+max-width:400px;
+box-shadow:0 10px 25px rgba(0,0,0,0.2);
+}
+
+h1{
+margin-bottom:20px;
+color:#333;
+}
+
+input{
+width:100%;
+padding:12px;
+margin-bottom:15px;
+border-radius:6px;
+border:1px solid #ccc;
+font-size:16px;
+}
+
+button{
+background:#2a5298;
+color:white;
+border:none;
+padding:12px;
+width:100%;
+font-size:16px;
+border-radius:6px;
+cursor:pointer;
+}
+
+button:hover{
+background:#1e3c72;
+}
+
+#qrImage{
+margin-top:20px;
+width:200px;
+}
+
+.download{
+margin-top:10px;
+background:#28a745;
+}
+</style>
 </head>
 
 <body>
 
+<div class="container">
+
 <h1>QR Code Generator</h1>
 
-<input type="text" id="text" placeholder="Enter text or link">
-
-<br><br>
+<input id="text" placeholder="Enter text or URL">
 
 <button onclick="generateQR()">Generate QR</button>
 
-<br><br>
+<img id="qrImage">
 
-<img id="qr" width="200">
+<button class="download" onclick="downloadQR()">Download QR</button>
 
-<br><br>
-
-<button onclick="downloadQR()">Download QR</button>
-
-<h2>Your QR History</h2>
-
-<ul id="history"></ul>
-
-<!-- Firebase -->
-<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-firestore-compat.js"></script>
+</div>
 
 <script>
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBcQU39OcjJ_EnIUIRPQStZnkl6QiLHp2o",
-  authDomain: "qr-generator-app-e20ed.firebaseapp.com",
-  projectId: "qr-generator-app-e20ed",
-  storageBucket: "qr-generator-app-e20ed.firebasestorage.app",
-  messagingSenderId: "386821981921",
-  appId: "1:386821981921:web:5164980f2c1871366dd9a0",
-  measurementId: "G-5PHW61H0K6"
-};
+function generateQR(){
+let text=document.getElementById("text").value;
+let qr="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data="+text;
+document.getElementById("qrImage").src=qr;
+}
 
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+function downloadQR(){
+let img=document.getElementById("qrImage").src;
+let a=document.createElement("a");
+a.href=img;
+a.download="qr-code.png";
+a.click();
+}
 
 </script>
 
-<script src="script.js"></script>
-
 </body>
 </html>
+```
