@@ -1,106 +1,153 @@
-```html
+
 <!DOCTYPE html>
 <html>
 <head>
-<title>Yugal QR Generator</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yugal QR</title>
 
 <style>
+
 body{
-font-family: Arial, sans-serif;
-background: linear-gradient(135deg,#1e3c72,#2a5298);
+margin:0;
+background:black;
+color:white;
+font-family:Arial;
+height:100vh;
 display:flex;
 justify-content:center;
 align-items:center;
-height:100vh;
-margin:0;
 }
 
 .container{
-background:white;
-padding:30px;
-border-radius:10px;
-text-align:center;
 width:90%;
-max-width:400px;
-box-shadow:0 10px 25px rgba(0,0,0,0.2);
+max-width:900px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:40px;
+}
+
+/* left QR */
+.left{
+flex:1;
+text-align:left;
+}
+
+#qr{
+width:140px;
+}
+
+/* right content */
+
+.right{
+flex:2;
 }
 
 h1{
+font-size:32px;
+margin-bottom:10px;
+}
+
+p{
+opacity:0.7;
 margin-bottom:20px;
-color:#333;
 }
 
 input{
 width:100%;
 padding:12px;
-margin-bottom:15px;
-border-radius:6px;
-border:1px solid #ccc;
 font-size:16px;
+border:none;
+outline:none;
+margin-bottom:15px;
 }
 
 button{
-background:#2a5298;
-color:white;
+padding:12px 18px;
 border:none;
-padding:12px;
-width:100%;
-font-size:16px;
-border-radius:6px;
 cursor:pointer;
+margin-right:10px;
 }
 
-button:hover{
-background:#1e3c72;
-}
-
-#qrImage{
-margin-top:20px;
-width:200px;
+.generate{
+background:white;
+color:black;
 }
 
 .download{
-margin-top:10px;
-background:#28a745;
+background:#444;
+color:white;
 }
+
+/* mobile */
+
+@media(max-width:700px){
+
+.container{
+flex-direction:column;
+text-align:center;
+}
+
+.left{
+text-align:center;
+}
+
+}
+
 </style>
 </head>
 
 <body>
+  <canvas id="stars"></canvas>
 
 <div class="container">
 
-<h1>QR Code Generator</h1>
+<div class="left">
+<img id="qr">
+</div>
+
+<div class="right">
+
+<h1>Welcome 👋</h1>
+<p>Create your QR code instantly</p>
 
 <input id="text" placeholder="Enter text or URL">
 
-<button onclick="generateQR()">Generate QR</button>
+<button class="generate" onclick="generateQR()">Generate</button>
+<button class="download" onclick="downloadQR()">Download</button>
 
-<img id="qrImage">
-
-<button class="download" onclick="downloadQR()">Download QR</button>
+</div>
 
 </div>
 
 <script>
 
 function generateQR(){
+
 let text=document.getElementById("text").value;
-let qr="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data="+text;
-document.getElementById("qrImage").src=qr;
+
+let qr="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data="+text;
+
+document.getElementById("qr").src=qr;
+
 }
 
 function downloadQR(){
-let img=document.getElementById("qrImage").src;
+
+let img=document.getElementById("qr").src;
+
 let a=document.createElement("a");
+
 a.href=img;
-a.download="qr-code.png";
+
+a.download="qr.png";
+
 a.click();
+
 }
 
 </script>
 
 </body>
 </html>
-```
+
