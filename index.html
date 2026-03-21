@@ -7,17 +7,35 @@
 
 <style>
 
-body{
+*{
 margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial;
+}
+
+body{
 background:black;
 color:white;
-font-family:Arial;
 height:100vh;
 display:flex;
 justify-content:center;
 align-items:center;
+overflow:hidden;
 }
 
+/* background canvas */
+#stars{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+z-index:-1;
+background:black;
+}
+
+/* layout */
 .container{
 width:90%;
 max-width:900px;
@@ -30,15 +48,14 @@ gap:40px;
 /* left QR */
 .left{
 flex:1;
-text-align:left;
 }
 
 #qr{
 width:140px;
+filter:drop-shadow(0 0 10px white);
 }
 
 /* right content */
-
 .right{
 flex:2;
 }
@@ -53,6 +70,7 @@ opacity:0.7;
 margin-bottom:20px;
 }
 
+/* input */
 input{
 width:100%;
 padding:12px;
@@ -62,6 +80,7 @@ outline:none;
 margin-bottom:15px;
 }
 
+/* buttons */
 button{
 padding:12px 18px;
 border:none;
@@ -75,30 +94,24 @@ color:black;
 }
 
 .download{
-background:#444;
+background:#333;
 color:white;
 }
 
 /* mobile */
-
 @media(max-width:700px){
-
 .container{
 flex-direction:column;
 text-align:center;
 }
-
-.left{
-text-align:center;
-}
-
 }
 
 </style>
 </head>
 
 <body>
-  <canvas id="stars"></canvas>
+
+<canvas id="stars"></canvas>
 
 <div class="container">
 
@@ -107,7 +120,6 @@ text-align:center;
 </div>
 
 <div class="right">
-
 <h1>Welcome 👋</h1>
 <p>Create your QR code instantly</p>
 
@@ -115,36 +127,113 @@ text-align:center;
 
 <button class="generate" onclick="generateQR()">Generate</button>
 <button class="download" onclick="downloadQR()">Download</button>
-
 </div>
 
 </div>
 
 <script>
 
+/* QR CODE */
 function generateQR(){
-
 let text=document.getElementById("text").value;
-
 let qr="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data="+text;
-
 document.getElementById("qr").src=qr;
-
 }
 
 function downloadQR(){
-
 let img=document.getElementById("qr").src;
-
 let a=document.createElement("a");
-
 a.href=img;
-
 a.download="qr.png";
-
 a.click();
-
 }
+
+/* GALAXY BACKGROUND */
+
+const canvas = document.getElementById("stars");
+const ctx = canvas.getContext("2d");
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+let stars = [];
+let shootingStars = [];
+
+// stars
+for(let i=0;i<200;i++){
+stars.push({
+x:Math.random()*canvas.width,
+y:Math.random()*canvas.height,
+size:Math.random()*2,
+speed:Math.random()*0.4
+});
+}
+
+// shooting stars
+function createShootingStar(){
+shootingStars.push({
+x:Math.random()*canvas.width,
+y:0,
+length:Math.random()*80+50,
+speed:Math.random()*6+4
+});
+}
+
+setInterval(createShootingStar,2000);
+
+function animate(){
+
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+ctx.shadowBlur=10;
+ctx.shadowColor="white";
+
+/* stars */
+stars.forEach(star=>{
+
+ctx.beginPath();
+ctx.arc(star.x,star.y,star.size,0,Math.PI*2);
+ctx.fillStyle="white";
+ctx.fill();
+
+star.y+=star.speed;
+
+if(star.y>canvas.height){
+star.y=0;
+star.x=Math.random()*canvas.width;
+}
+
+});
+
+/* shooting stars */
+shootingStars.forEach((s,i)=>{
+
+ctx.beginPath();
+ctx.moveTo(s.x,s.y);
+ctx.lineTo(s.x-s.length,s.y+s.length);
+ctx.strokeStyle="white";
+ctx.lineWidth=2;
+ctx.stroke();
+
+s.x+=s.speed;
+s.y+=s.speed;
+
+if(s.y>canvas.height){
+shootingStars.splice(i,1);
+}
+
+});
+
+requestAnimationFrame(animate);
+}
+
+animate();
+
+/* resize fix */
+window.addEventListener("resize",()=>{
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+});
 
 </script>
 
