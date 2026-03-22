@@ -75,3 +75,28 @@ window.URL.revokeObjectURL(url);
 });
 
 }
+function changeType(){
+  let type = document.getElementById("type").value;
+  let inputs = document.getElementById("inputs");
+
+  if(type === "text"){
+    inputs.innerHTML = `<input id="data" placeholder="Enter text">`;
+  }
+
+  if(type === "wifi"){
+    inputs.innerHTML = `
+      <input id="ssid" placeholder="WiFi Name">
+      <input id="pass" placeholder="Password">
+    `;
+  }
+
+  if(type === "upi"){
+    inputs.innerHTML = `
+      <input id="upi" placeholder="UPI ID">
+      <input id="name" placeholder="Name">
+      <input id="amount" placeholder="Amount">
+    `;
+  }
+}
+
+changeType();
