@@ -114,8 +114,7 @@ function shareQR(){
   let data = "";
 
   if(type === "text"){
-    let el = document.getElementById("text");
-    if(el) data = el.value;
+    data = document.getElementById("text")?.value || "";
   }
 
   if(type === "wifi"){
@@ -132,26 +131,14 @@ function shareQR(){
   }
 
   if(!data){
-    alert("Nothing to share!");
+    alert("Enter something first!");
     return;
   }
 
-  // ✅ Try modern share (mobile)
-  if(navigator.share){
-    navigator.share({
-      title: "QR Data",
-      text: data
-    }).catch(()=>{});
-  } 
-  // ✅ Fallback (PC)
-  else{
-    let temp = document.createElement("textarea");
-    temp.value = data;
-    document.body.appendChild(temp);
-    temp.select();
-    document.execCommand("copy");
-    document.body.removeChild(temp);
-
+  // ✅ modern copy
+  navigator.clipboard.writeText(data).then(()=>{
     alert("Copied! Now paste anywhere 👍");
-  }
+  }).catch(()=>{
+    alert("Copy failed (use HTTPS or Chrome)");
+  });
 }
