@@ -109,36 +109,29 @@ function setType(t){
   document.getElementById("type").value = t;
   changeType();
 }
-function shareQR(){
-  let type = document.getElementById("type").value;
-  let data = "";
+function shareQR() {
+  const canvas = document.getElementById("qrCanvas");
 
-  if(type === "text"){
-    data = document.getElementById("text")?.value || "";
-  }
-
-  if(type === "wifi"){
-    let ssid = document.getElementById("ssid")?.value;
-    let pass = document.getElementById("pass")?.value;
-    data = `WIFI:T:WPA;S:${ssid};P:${pass};;`;
-  }
-
-  if(type === "upi"){
-    let upi = document.getElementById("upi")?.value;
-    let name = document.getElementById("name")?.value;
-    let amount = document.getElementById("amount")?.value;
-    data = `upi://pay?pa=${upi}&pn=${name}&am=${amount}&cu=INR`;
-  }
-
-  if(!data){
-    alert("Enter something first!");
+  if (!canvas) {
+    alert("QR not generated yet!");
     return;
   }
 
-  // ✅ modern copy
-  navigator.clipboard.writeText(data).then(()=>{
-    alert("Copied! Now paste anywhere 👍");
-  }).catch(()=>{
-    alert("Copy failed (use HTTPS or Chrome)");
+  canvas.toBlob(async (blob) => {
+    const file = new File([blob], "qr.png", { type: "image/png" });
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: "My QR Code",
+          text: "Scan this QR",
+          files: [file]
+        });
+      } catch (err) {
+        alert("Sharing cancelled or not supported");
+      }
+    } else {
+      alert("Sharing not supported in your browser");
+    }
   });
 }
