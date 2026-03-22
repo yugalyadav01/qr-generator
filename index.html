@@ -57,8 +57,10 @@ body{
   width:35%;
   padding:30px;
   background:rgba(255,255,255,0.05);
-  backdrop-filter:blur(10px);
-  border-right:1px solid rgba(255,255,255,0.1);
+  backdrop-filter:blur(20px);
+  border:1px solid rgba(255,255,255,0.1);
+  box-shadow:0 0 40px rgba(0,255,255,0.2);
+  border-radius:20px;
 }
 
 /* RIGHT */
@@ -97,9 +99,13 @@ button{
   transition:0.3s;
 }
 
+button{
+  background:linear-gradient(45deg,#00f2fe,#4facfe);
+  color:black;
+}
+
 button:hover{
-  background:#ccc;
-  transform:scale(1.03);
+  box-shadow:0 0 15px #00f2fe;
 }
 
 /* QR */
@@ -141,6 +147,7 @@ button:hover{
 
     <button onclick="generateQR()">Generate</button>
     <button onclick="downloadQR()">Download</button>
+    <button onclick="shareQR()">Share</button>
     <button onclick="copyText()">Copy</button>
     <button onclick="startScanner()">Scan QR</button>
 
@@ -200,7 +207,10 @@ function changeType(){
   }
 }
 
-window.onload = changeType;
+window.onload = ()=>{
+  changeType();
+  renderHistory();
+};
 
 // GENERATE QR
 function generateQR(){
@@ -266,21 +276,33 @@ function copyText(){
 
 // HISTORY
 function saveHistory(text){
-  let history=document.getElementById("history");
-  let item=document.createElement("div");
-  item.innerText=text;
-  item.style.cursor="pointer";
-
-  item.onclick=()=>{
-    document.getElementById("type").value="text";
-    changeType();
-    document.getElementById("text").value=text;
-    generateQR();
-  };
-
-  history.prepend(item);
+  let old = JSON.parse(localStorage.getItem("qrHistory")) || [];
+  old.unshift(text);
+  localStorage.setItem("qrHistory", JSON.stringify(old));
+  renderHistory();
 }
 
+function renderHistory(){
+  let historyDiv = document.getElementById("history");
+  historyDiv.innerHTML = "";
+
+  let data = JSON.parse(localStorage.getItem("qrHistory")) || [];
+
+  data.forEach(item=>{
+    let div = document.createElement("div");
+    div.innerText = item;
+    div.style.cursor = "pointer";
+
+    div.onclick = ()=>{
+      document.getElementById("type").value="text";
+      changeType();
+      document.getElementById("text").value=item;
+      generateQR();
+    };
+
+    historyDiv.appendChild(div);
+  });
+}
 // SCANNER
 function startScanner(){
   let reader = new Html5Qrcode("reader");

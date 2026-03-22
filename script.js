@@ -100,3 +100,58 @@ function changeType(){
 }
 
 changeType();
+document.addEventListener("input", function(e){
+  if(e.target.closest("#inputs")){
+    generateQR();
+  }
+});
+function setType(t){
+  document.getElementById("type").value = t;
+  changeType();
+}
+function shareQR(){
+  let type = document.getElementById("type").value;
+  let data = "";
+
+  if(type === "text"){
+    let el = document.getElementById("text");
+    if(el) data = el.value;
+  }
+
+  if(type === "wifi"){
+    let ssid = document.getElementById("ssid")?.value;
+    let pass = document.getElementById("pass")?.value;
+    data = `WIFI:T:WPA;S:${ssid};P:${pass};;`;
+  }
+
+  if(type === "upi"){
+    let upi = document.getElementById("upi")?.value;
+    let name = document.getElementById("name")?.value;
+    let amount = document.getElementById("amount")?.value;
+    data = `upi://pay?pa=${upi}&pn=${name}&am=${amount}&cu=INR`;
+  }
+
+  if(!data){
+    alert("Nothing to share!");
+    return;
+  }
+
+  // ✅ Try modern share (mobile)
+  if(navigator.share){
+    navigator.share({
+      title: "QR Data",
+      text: data
+    }).catch(()=>{});
+  } 
+  // ✅ Fallback (PC)
+  else{
+    let temp = document.createElement("textarea");
+    temp.value = data;
+    document.body.appendChild(temp);
+    temp.select();
+    document.execCommand("copy");
+    document.body.removeChild(temp);
+
+    alert("Copied! Now paste anywhere 👍");
+  }
+}

@@ -167,3 +167,19 @@ select, input {
 .container{
   box-shadow:0 0 30px rgba(56,189,248,0.3);
 }
+.tabs{
+  display:flex;
+  gap:5px;
+}
+
+.tabs button{
+  flex:1;
+  background:#111;
+  color:white;
+  border:1px solid #444;
+}
+
+.tabs button:hover{
+  background:#38bdf8;
+  color:black;
+}
