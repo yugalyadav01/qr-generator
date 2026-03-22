@@ -1,140 +1,68 @@
-function generateQR(){
+// ---------- SAVE HISTORY ----------
+function saveHistory(text){
+  if(!text) return;
+  let old = JSON.parse(localStorage.getItem("qrHistory")) || [];
 
-let text=document.getElementById("text").value;
-
-if(text===""){
-alert("Enter text first");
-return;
-}
-
-let qr="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data="+encodeURIComponent(text);
-
-document.getElementById("qr").src=qr;
-
-// Save to Firebase
-db.collection("qrcodes").add({
-text:text,
-created:new Date().toISOString()
-})
-.then(()=>{
-loadHistory();
-});
-
-}
-
-function loadHistory(){
-
-let list=document.getElementById("history");
-
-list.innerHTML="";
-
-db.collection("qrcodes").get().then((snapshot)=>{
-
-snapshot.forEach((doc)=>{
-
-let data=doc.data();
-
-let li=document.createElement("li");
-
-li.textContent=data.text;
-
-list.appendChild(li);
-
-});
-
-});
-
-}
-
-loadHistory();
-function downloadQR() {
-
-let img = document.getElementById("qr");
-
-if (!img.src || img.src === "") {
-alert("Generate QR first");
-return;
-}
-
-fetch(img.src)
-.then(response => response.blob())
-.then(blob => {
-
-let url = window.URL.createObjectURL(blob);
-
-let a = document.createElement("a");
-a.href = url;
-a.download = "qrcode.png";
-
-document.body.appendChild(a);
-a.click();
-
-document.body.removeChild(a);
-window.URL.revokeObjectURL(url);
-
-});
-
-}
-function changeType(){
-  let type = document.getElementById("type").value;
-  let inputs = document.getElementById("inputs");
-
-  if(type === "text"){
-    inputs.innerHTML = `<input id="data" placeholder="Enter text">`;
+  // Prevent duplicates
+  if(!old.includes(text)){
+    old.unshift(text);
   }
 
-  if(type === "wifi"){
-    inputs.innerHTML = `
-      <input id="ssid" placeholder="WiFi Name">
-      <input id="pass" placeholder="Password">
-    `;
-  }
-
-  if(type === "upi"){
-    inputs.innerHTML = `
-      <input id="upi" placeholder="UPI ID">
-      <input id="name" placeholder="Name">
-      <input id="amount" placeholder="Amount">
-    `;
-  }
+  localStorage.setItem("qrHistory", JSON.stringify(old));
+  renderHistory();
 }
 
-changeType();
-document.addEventListener("input", function(e){
-  if(e.target.closest("#inputs")){
-    generateQR();
-  }
-});
-function setType(t){
-  document.getElementById("type").value = t;
-  changeType();
-}
-function shareQR() {
-  const canvas = document.getElementById("qrCanvas");
+// ---------- RENDER HISTORY ----------
+function renderHistory(){
+  let historyDiv = document.getElementById("history");
+  historyDiv.innerHTML = "";
 
-  if (!canvas) {
-    alert("QR not generated yet!");
+  let data = JSON.parse(localStorage.getItem("qrHistory")) || [];
+
+  if(data.length === 0){
+    historyDiv.innerHTML = "<div style='color:gray;font-size:12px;'>No QR history yet</div>";
     return;
   }
 
-  canvas.toBlob(async (blob) => {
-    const file = new File([blob], "qr.png", { type: "image/png" });
+  data.forEach((item, index)=>{
+    let div = document.createElement("div");
+    div.style.display = "flex";
+    div.style.justifyContent = "space-between";
+    div.style.alignItems = "center";
+    div.style.cursor = "pointer";
+    div.style.marginBottom = "5px";
 
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: "My QR Code",
-          text: "Scan this QR",
-          files: [file]
-        });
-      } catch (err) {
-        alert("Sharing cancelled or not supported");
-      }
-    } else {
-      alert("Sharing not supported in your browser");
-    }
+    // QR text
+    let span = document.createElement("span");
+    span.innerText = item;
+    span.onclick = ()=>{
+      document.getElementById("type").value = "text";
+      changeType();
+      document.getElementById("text").value = item;
+      generateQR();
+    };
+
+    // Delete individual button
+    let delBtn = document.createElement("button");
+    delBtn.innerText = "🗑️";
+    delBtn.style.background="transparent";
+    delBtn.style.color="red";
+    delBtn.style.border="none";
+    delBtn.style.cursor="pointer";
+    delBtn.onclick = (e)=>{
+      e.stopPropagation(); // Prevent triggering QR regenerate
+      data.splice(index,1);
+      localStorage.setItem("qrHistory", JSON.stringify(data));
+      renderHistory();
+    };
+
+    div.appendChild(span);
+    div.appendChild(delBtn);
+    historyDiv.appendChild(div);
   });
 }
+
+// ---------- CLEAR ALL HISTORY ----------
 function clearHistory(){
   if(confirm("Are you sure you want to delete all QR history?")){
     localStorage.removeItem("qrHistory");
@@ -142,3 +70,9 @@ function clearHistory(){
     alert("History cleared!");
   }
 }
+
+// ---------- INITIALIZE ----------
+window.onload = ()=>{
+  changeType();
+  renderHistory();
+};
