@@ -135,3 +135,10 @@ function shareQR() {
     }
   });
 }
+function clearHistory(){
+  if(confirm("Are you sure you want to delete all QR history?")){
+    localStorage.removeItem("qrHistory");
+    renderHistory();
+    alert("History cleared!");
+  }
+}
