@@ -7,129 +7,32 @@
 
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
-
-body{
-  background:black;
-  color:white;
-  font-family:Arial;
-  overflow:hidden;
-}
-
-/* STARS */
-.stars{
-  position:fixed;
-  width:100%;
-  height:100%;
-  z-index:0;
-}
-
-.star{
-  position:absolute;
-  background:white;
-  border-radius:50%;
-  animation: move linear infinite, twinkle 2s infinite alternate;
-}
-
+body{background:black;color:white;font-family:Arial;overflow:hidden;}
+.stars{position:fixed;width:100%;height:100%;z-index:0;}
+.star{position:absolute;background:white;border-radius:50%;animation:move linear infinite, twinkle 2s infinite alternate;}
 .small{width:2px;height:2px;}
 .medium{width:3px;height:3px;}
 .big{width:5px;height:5px;}
-
-@keyframes move{
-  from{transform:translateY(-10px);}
-  to{transform:translateY(100vh);}
-}
-
-@keyframes twinkle{
-  from{opacity:0.3;}
-  to{opacity:1;}
-}
-
-/* APP */
-.app{
-  display:flex;
-  height:100vh;
-  position:relative;
-  z-index:2;
-}
-
-/* LEFT */
-.left{
-  width:35%;
-  padding:30px;
-  background:rgba(255,255,255,0.05);
-  backdrop-filter:blur(20px);
-  border:1px solid rgba(255,255,255,0.1);
-  box-shadow:0 0 40px rgba(0,255,255,0.2);
-  border-radius:20px;
-}
-
-/* RIGHT */
-.right{
-  width:65%;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  flex-direction:column;
-}
-
+@keyframes move{from{transform:translateY(-10px);}to{transform:translateY(100vh);}}
+@keyframes twinkle{from{opacity:0.3;}to{opacity:1;}}
+.app{display:flex;height:100vh;position:relative;z-index:2;}
+.left{width:35%;padding:30px;background:rgba(255,255,255,0.05);backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,0.1);box-shadow:0 0 40px rgba(0,255,255,0.2);border-radius:20px;}
+.right{width:65%;display:flex;justify-content:center;align-items:center;flex-direction:column;}
 h1{font-size:26px;}
 .tag{color:gray;margin-bottom:20px;}
-
-select, input{
-  width:100%;
-  padding:12px;
-  margin:10px 0;
-  border:1px solid white;
-  background:black;
-  color:white;
-  border-radius:10px;
-}
-
-/* BUTTON */
-button{
-  width:100%;
-  padding:12px;
-  margin:5px 0;
-  border:none;
-  border-radius:10px;
-  cursor:pointer;
-  background:white;
-  color:black;
-  font-weight:bold;
-  transition:0.3s;
-}
-
-button{
-  background:linear-gradient(45deg,#00f2fe,#4facfe);
-  color:black;
-}
-
-button:hover{
-  box-shadow:0 0 15px #00f2fe;
-}
-
-/* QR */
-#qr canvas{
-  width:320px !important;
-  height:320px !important;
-}
-
-.history{
-  margin-top:20px;
-  max-height:150px;
-  overflow:auto;
-  font-size:13px;
-  border-top:1px solid rgba(255,255,255,0.2);
-}
+select, input{width:100%;padding:12px;margin:10px 0;border:1px solid white;background:black;color:white;border-radius:10px;}
+button{width:100%;padding:12px;margin:5px 0;border:none;border-radius:10px;cursor:pointer;background:white;color:black;font-weight:bold;transition:0.3s;}
+button{background:linear-gradient(45deg,#00f2fe,#4facfe);color:black;}
+button:hover{box-shadow:0 0 15px #00f2fe;}
+#qr canvas{width:320px !important;height:320px !important;}
+.history{margin-top:20px;max-height:150px;overflow:auto;font-size:13px;border-top:1px solid rgba(255,255,255,0.2);}
 </style>
 </head>
 
 <body>
-
 <div class="stars" id="stars"></div>
 
 <div class="app">
-
   <!-- LEFT -->
   <div class="left">
     <h1>YUGAL QR</h1>
@@ -147,7 +50,7 @@ button:hover{
 
     <button onclick="generateQR()">Generate</button>
     <button onclick="downloadQR()">Download</button>
-    <button onclick="shareQR()">Share</button>
+    <button onclick="shareQR()">Share QR</button>
     <button onclick="copyText()">Copy</button>
     <button onclick="startScanner()">Scan QR</button>
 
@@ -160,11 +63,11 @@ button:hover{
       Your QR will appear here 👇
     </div>
     <div id="qr"></div>
-    <div id="reader"></div>
+    <div id="reader" style="width:300px;margin-top:20px;"></div>
   </div>
-
 </div>
 
+<!-- SCRIPTS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://unpkg.com/html5-qrcode"></script>
 
@@ -189,28 +92,14 @@ function changeType(){
 
   if(type === "text"){
     inputs.innerHTML = `<input id="text" placeholder="Enter text or URL">`;
-  }
-
-  if(type === "wifi"){
-    inputs.innerHTML = `
-      <input id="ssid" placeholder="WiFi Name">
-      <input id="pass" placeholder="Password">
-    `;
-  }
-
-  if(type === "upi"){
-    inputs.innerHTML = `
-      <input id="upi" placeholder="UPI ID">
-      <input id="name" placeholder="Name">
-      <input id="amount" placeholder="Amount">
-    `;
+  } else if(type === "wifi"){
+    inputs.innerHTML = `<input id="ssid" placeholder="WiFi Name"><input id="pass" placeholder="Password">`;
+  } else if(type === "upi"){
+    inputs.innerHTML = `<input id="upi" placeholder="UPI ID"><input id="name" placeholder="Name"><input id="amount" placeholder="Amount">`;
   }
 }
 
-window.onload = ()=>{
-  changeType();
-  renderHistory();
-};
+window.onload = ()=>{ changeType(); renderHistory(); };
 
 // GENERATE QR
 function generateQR(){
@@ -222,43 +111,27 @@ function generateQR(){
 
   if(type === "text"){
     data = document.getElementById("text").value.trim();
-  }
-
-  if(type === "wifi"){
+  } else if(type === "wifi"){
     let ssid = document.getElementById("ssid").value;
     let pass = document.getElementById("pass").value;
     data = `WIFI:T:WPA;S:${ssid};P:${pass};;`;
-  }
-
-  if(type === "upi"){
+  } else if(type === "upi"){
     let upi = document.getElementById("upi").value;
     let name = document.getElementById("name").value;
     let amount = document.getElementById("amount").value;
     data = `upi://pay?pa=${upi}&pn=${name}&am=${amount}&cu=INR`;
   }
 
-  if(!data){
-    alert("Enter data first!");
-    return;
-  }
+  if(!data){ alert("Enter data first!"); return; }
 
-  new QRCode(qrDiv, {
-    text: data,
-    width: 300,
-    height: 300
-  });
-
+  new QRCode(qrDiv, { text: data, width: 300, height: 300 });
   saveHistory(data);
 }
 
 // DOWNLOAD
 function downloadQR(){
   let img = document.querySelector("#qr img");
-  if(!img){
-    alert("Generate QR first!");
-    return;
-  }
-
+  if(!img){ alert("Generate QR first!"); return; }
   let link = document.createElement("a");
   link.href = img.src;
   link.download = "yugal-qr.png";
@@ -274,6 +147,21 @@ function copyText(){
   alert("Copied!");
 }
 
+// SHARE QR
+function shareQR(){
+  const canvas = document.querySelector("#qr canvas");
+  if(!canvas){ alert("Generate QR first!"); return; }
+
+  canvas.toBlob(async (blob)=>{
+    const file = new File([blob],"yugal-qr.png",{type:"image/png"});
+    if(navigator.share){
+      try{
+        await navigator.share({title:"My QR Code",text:"Scan this QR",files:[file]});
+      }catch(e){ alert("Sharing cancelled or not supported"); }
+    } else { alert("Sharing not supported in this browser"); }
+  });
+}
+
 // HISTORY
 function saveHistory(text){
   let old = JSON.parse(localStorage.getItem("qrHistory")) || [];
@@ -285,38 +173,34 @@ function saveHistory(text){
 function renderHistory(){
   let historyDiv = document.getElementById("history");
   historyDiv.innerHTML = "";
-
   let data = JSON.parse(localStorage.getItem("qrHistory")) || [];
-
   data.forEach(item=>{
     let div = document.createElement("div");
     div.innerText = item;
     div.style.cursor = "pointer";
-
     div.onclick = ()=>{
       document.getElementById("type").value="text";
       changeType();
       document.getElementById("text").value=item;
       generateQR();
     };
-
     historyDiv.appendChild(div);
   });
 }
+
 // SCANNER
 function startScanner(){
-  let reader = new Html5Qrcode("reader");
-
-  reader.start(
-    { facingMode: "environment" },
-    { fps: 10, qrbox: 250 },
-    qrCodeMessage => {
-      alert("Scanned: " + qrCodeMessage);
-      reader.stop();
-    }
-  );
+  const scanner = new Html5Qrcode("reader");
+  scanner.start(
+    {facingMode:"environment"},
+    {fps:10,qrbox:250},
+    (decodedText)=>{
+      alert("Scanned: "+decodedText);
+      scanner.stop();
+    },
+    (error)=>{ console.log(error); }
+  ).catch(err=>{ alert("Camera permission denied or not supported"); });
 }
 </script>
-
 </body>
 </html>
