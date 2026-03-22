@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>YUGAL QR - PRO</title>
+<title>YUGAL QR PRO</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
@@ -12,14 +12,10 @@ body{
   background:black;
   color:white;
   font-family:Arial;
-  height:100vh;
   overflow:hidden;
-  display:flex;
-  justify-content:center;
-  align-items:center;
 }
 
-/* ⭐ Galaxy Stars */
+/* ⭐ STARS */
 .stars{
   position:fixed;
   width:100%;
@@ -48,45 +44,52 @@ body{
   to{opacity:1;}
 }
 
-/* 🌟 Glass Card */
-.container{
+/* APP LAYOUT */
+.app{
+  display:flex;
+  height:100vh;
   position:relative;
   z-index:2;
-  width:340px;
-  padding:25px;
-  border-radius:20px;
+}
+
+/* LEFT PANEL */
+.left{
+  width:35%;
+  padding:30px;
   background:rgba(255,255,255,0.05);
-  backdrop-filter:blur(12px);
-  border:1px solid rgba(255,255,255,0.2);
-  text-align:center;
-  box-shadow:0 0 25px rgba(255,255,255,0.1);
+  backdrop-filter:blur(10px);
+  border-right:1px solid rgba(255,255,255,0.1);
 }
 
-/* Title */
-h1{
-  font-size:22px;
-  margin-bottom:5px;
-}
-.tag{
-  font-size:12px;
-  color:gray;
-  margin-bottom:15px;
+/* RIGHT PANEL */
+.right{
+  width:65%;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
 }
 
-/* Input */
+/* TEXT */
+h1{font-size:26px;}
+.tag{color:gray;margin-bottom:20px;}
+
+/* INPUT */
 input{
   width:100%;
-  padding:10px;
-  border:none;
+  padding:12px;
+  margin:10px 0;
+  border:1px solid white;
+  background:black;
+  color:white;
   border-radius:10px;
-  margin-bottom:10px;
-  outline:none;
 }
 
-/* Buttons */
+/* BUTTON */
 button{
-  padding:10px;
-  margin:5px;
+  width:100%;
+  padding:12px;
+  margin:5px 0;
   border:none;
   border-radius:10px;
   cursor:pointer;
@@ -97,30 +100,28 @@ button{
 }
 
 button:hover{
-  transform:scale(1.05);
   background:#ccc;
+  transform:scale(1.03);
 }
 
-/* QR */
-#qr{
-  margin-top:15px;
+/* QR BIG */
+#qr canvas{
+  width:320px !important;
+  height:320px !important;
 }
 
-/* History */
+/* HISTORY */
 .history{
-  margin-top:10px;
-  max-height:80px;
+  margin-top:20px;
+  max-height:150px;
   overflow:auto;
-  font-size:12px;
+  font-size:13px;
   border-top:1px solid rgba(255,255,255,0.2);
-  padding-top:5px;
 }
 
-/* Footer */
-.footer{
-  margin-top:10px;
-  font-size:10px;
-  color:gray;
+/* SCANNER */
+#reader{
+  margin-top:20px;
 }
 </style>
 </head>
@@ -129,27 +130,44 @@ button:hover{
 
 <div class="stars" id="stars"></div>
 
-<div class="container">
-  <h1>YUGAL QR</h1>
-  <div class="tag">Fast • Free • Secure</div>
+<div class="app">
 
-  <input type="text" id="text" placeholder="Enter text or URL">
+  <!-- LEFT -->
+  <div class="left">
+    <h1>YUGAL QR</h1>
+    <div class="tag">Fast • Free • Secure</div>
 
-  <button onclick="generateQR()">Generate</button>
-  <button onclick="downloadQR()">Download</button>
-  <button onclick="copyText()">Copy</button>
+    <input type="text" id="text" placeholder="Enter text or URL">
+
+    <button onclick="generateQR()">Generate</button>
+    <button onclick="downloadQR()">Download</button>
+    <button onclick="copyText()">Copy</button>
+    <button onclick="startScanner()">Scan QR</button>
+
+    <div class="history" id="history"></div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="right">
+  <div id="qrBox" style="text-align:center;">
+
+  <div id="qrText" style="margin-bottom:10px;font-size:18px;color:gray;">
+    Your QR will appear here 👇
+  </div>
 
   <div id="qr"></div>
 
-  <div class="history" id="history"></div>
+</div>
+    <div id="reader"></div>
+  </div>
 
-  <div class="footer">© 2026 Yugal QR</div>
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://unpkg.com/html5-qrcode"></script>
 
 <script>
-// ⭐ Stars
+// ⭐ STARS
 let starsContainer = document.getElementById("stars");
 
 for(let i=0;i<150;i++){
@@ -161,13 +179,12 @@ for(let i=0;i<150;i++){
 
   star.style.left=Math.random()*100+"vw";
   star.style.top=Math.random()*100+"vh";
-
   star.style.animationDuration=(5+Math.random()*10)+"s";
 
   starsContainer.appendChild(star);
 }
 
-// QR
+// QR GENERATE
 function generateQR(){
   let text=document.getElementById("text").value;
 
@@ -177,11 +194,12 @@ function generateQR(){
   }
 
   document.getElementById("qr").innerHTML="";
+  document.getElementById("qrText").innerText="Your QR is here 👇"; // 👈 CHANGE TEXT
 
   new QRCode(document.getElementById("qr"),{
     text:text,
-    width:200,
-    height:200,
+    width:300,
+    height:300,
     colorDark:"#ffffff",
     colorLight:"#000000"
   });
@@ -189,7 +207,7 @@ function generateQR(){
   saveHistory(text);
 }
 
-// Download
+// DOWNLOAD
 function downloadQR(){
   let canvas=document.querySelector("#qr canvas");
   if(!canvas){
@@ -203,7 +221,7 @@ function downloadQR(){
   link.click();
 }
 
-// Copy
+// COPY
 function copyText(){
   let text=document.getElementById("text");
   text.select();
@@ -211,7 +229,7 @@ function copyText(){
   alert("Copied!");
 }
 
-// History
+// HISTORY
 function saveHistory(text){
   let history=document.getElementById("history");
   let item=document.createElement("div");
@@ -225,6 +243,20 @@ function saveHistory(text){
   };
 
   history.prepend(item);
+}
+
+// SCANNER
+function startScanner(){
+  let reader = new Html5Qrcode("reader");
+
+  reader.start(
+    { facingMode: "environment" },
+    { fps: 10, qrbox: 250 },
+    qrCodeMessage => {
+      alert("Scanned: " + qrCodeMessage);
+      reader.stop();
+    }
+  );
 }
 </script>
 
