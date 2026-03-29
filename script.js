@@ -1,6 +1,26 @@
+// ---------- GENERATE QR ----------
+function generateQR() {
+  let text = document.getElementById("text").value;
+  if(!text) return;
+
+  // Generate QR code (using your existing QR library)
+  // Example if you use QRCode.js
+  let qrDiv = document.getElementById("qrcode");
+  qrDiv.innerHTML = ""; // Clear old QR
+  new QRCode(qrDiv, {
+    text: text,
+    width: 200,
+    height: 200,
+  });
+
+  // Save to history only when QR is generated
+  saveHistory(text);
+}
+
 // ---------- SAVE HISTORY ----------
 function saveHistory(text){
   if(!text) return;
+
   let old = JSON.parse(localStorage.getItem("qrHistory")) || [];
 
   // Prevent duplicates
@@ -36,8 +56,6 @@ function renderHistory(){
     let span = document.createElement("span");
     span.innerText = item;
     span.onclick = ()=>{
-      document.getElementById("type").value = "text";
-      changeType();
       document.getElementById("text").value = item;
       generateQR();
     };
@@ -73,6 +91,20 @@ function clearHistory(){
 
 // ---------- INITIALIZE ----------
 window.onload = ()=>{
-  changeType();
   renderHistory();
-};
+
+  // Attach click event to generate button
+  let generateBtn = document.getElementById("generateBtn");
+  if(generateBtn){
+    generateBtn.addEventListener("click", generateQR);
+  }
+
+  // Attach click event to clear history button (if exists)
+  let clearBtn = document.getElementById("clearHistoryBtn");
+  if(clearBtn){
+    clearBtn.addEventListener("click", clearHistory);
+  }
+};function setType(value){
+  document.getElementById("type").value = value;
+  changeType();
+}
